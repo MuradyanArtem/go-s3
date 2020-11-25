@@ -1,0 +1,144 @@
+---
+openapi: 3.0.0
+info:
+  title: Simple Inventory API
+  description: This is a simple API
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/a.muradyan/s3-server/1.0.0
+  description: SwaggerHub API Auto Mocking
+paths:
+  '/file/upload':
+    get:
+      summary: Get uri to upload file to s3
+      parameters:
+      - name: size
+        in: query
+        description: downloaded file size
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: number
+      - name: uuid
+        in: query
+        description: user uuid
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: uuid
+      - name: filename
+        in: query
+        description: uploaded filename
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: uri to upload object to s3
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uri
+        '400':
+          description: bad request
+        '404':
+          description: file not found
+  '/file/download':
+    get:
+      summary: Get uri to download file to s3
+      parameters:
+      - name: uuid
+        in: query
+        description: user uuid
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: uuid
+      - name: filename
+        in: query
+        description: filename
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: uri to download object from s3
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uri
+        '400':
+          description: bad request
+        '404':
+          description: file not found
+  '/file':
+    delete:
+      summary: Delete object by path
+      parameters:
+      - name: uuid
+        in: query
+        description: user uuid
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: uuid
+      - name: filename
+        in: query
+        description: filename
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: file successfully deleted
+        '404':
+          description: file not found
+        '400':
+          description: bad request
+  '/file/size':
+    get:
+      summary: Get file size by path
+      parameters:
+      - name: uuid
+        in: query
+        description: user uuid
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: uuid
+      - name: filename
+        in: query
+        description: filename
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: file size
+          content:
+            application/json:
+              schema:
+                type: number
+        '404':
+          description: file not found
+        '400':
+          description: bad request
