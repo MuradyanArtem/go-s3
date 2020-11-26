@@ -1,7 +1,7 @@
 import React from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
-import {apiUploadFile} from './api';
+import {apiDeleteFile, apiUploadFile} from './api';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -18,9 +18,14 @@ export default class App extends React.Component {
     this.fileInput = React.createRef();
 
     this.backend = axios.create({
-      baseURL: 'http://localhost:9000',
+      baseURL: 'http://localhost:9000/api',
       timeout: 1000,
       
+    });
+
+    this.minio = axios.create({
+      baseURL: 'http://localhost:9000',
+      timeout: 1000,
     });
   }
 
@@ -33,6 +38,10 @@ export default class App extends React.Component {
   deleteObject(event) {
     event.preventDefault();
 
+    this.backend.delete(apiDeleteFile(
+      this.state.uuid,
+      this.fileInput.current.files[0].name,
+    ));
   }
 
   uploadFile(event) {
@@ -45,23 +54,11 @@ export default class App extends React.Component {
     ))
     .then((resp) => {
       if (resp.status === 200) {
-        console.log(resp.data);
-        axios.put(resp.data, this.fileInput.current.files[0])
-        .then((resp) => {
-          console.log('s3', resp.status);
-          console.log('s3', resp.data);
-          }
-        )
-        .catch((resp) => {
-          console.log('s3', resp.status);
-          console.log('s3', resp.data);
-          });
+        const url = new URL(resp.data);
+        console.log(url.pathname);
+        this.minio.put(url.pathname, this.fileInput.current.files[0]);
       }
-    })
-    .catch((resp) => {
-      console.log('backend', resp.status);
-      console.log('backend', resp.data);
-      });
+    });
   }
 
   render() {

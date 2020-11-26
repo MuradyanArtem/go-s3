@@ -13,7 +13,7 @@ import (
 func main() {
 	api, err := apiserver.NewApiServer(
 		&client.S3ClientConfig{
-			Address: "http://127.0.0.1:9000/",
+			Address: "minio:9000",
 			Access:  "access_123",
 			Secret:  "secret_123",
 			Token:   "",

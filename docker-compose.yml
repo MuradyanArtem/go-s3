@@ -7,19 +7,19 @@ services:
       - 127.0.0.1:9000:80
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - 'minio'
+      - 'api'
 
   api:
     build: .
     image: api
     depends_on:
       - 'minio'
-      - 'nginx'
 
   minio:
     image: minio/minio:latest
     restart: on-failure
-    ports:
-      - 127.0.0.1:9001:9000
     environment:
       MINIO_ACCESS_KEY: access_123
       MINIO_SECRET_KEY: secret_123
